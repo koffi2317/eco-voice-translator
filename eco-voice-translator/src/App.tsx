@@ -3,7 +3,7 @@ import Translation from "./Translation";
 
 function App(){ 
 
-return Presentation()
+return <Presentation/>
 
 } 
 export default App;
