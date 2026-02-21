@@ -1,11 +1,21 @@
+import { useState } from "react";
 import Presentation from "./Presentation";
 import Translation from "./Translation";
 
-const button = document.querySelector('button');
 
-function App(){ 
 
-return <Presentation/>
+function App() {
+  const [page, setPage] = useState<"presentation" | "translation">("presentation");
 
-} 
+  const handleStart = () => {
+    setPage("translation");
+  };
+
+  return page === "presentation" ? (
+    <Presentation onStart={handleStart} />
+  ) : (
+    <Translation />
+  );
+}
+
 export default App;
