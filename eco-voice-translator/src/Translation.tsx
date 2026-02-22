@@ -109,6 +109,30 @@ async function handleTranslateClick() {
 }
 
 
+function handleSpeakTranslatedText() {  
+
+    if (translatedText.trim() === "") {
+        alert("Aucun texte traduit à prononcer.");
+        return; 
+    } 
+
+    else if (!("speechSynthesis" in window)) { 
+
+        alert("La synthèse vocale n'est pas supportée sur ce navigateur.");
+        return;
+    }   
+
+    const utterance = new SpeechSynthesisUtterance(translatedText);
+    utterance.lang = "en-US"; // ou la langue de votre choix
+    window.speechSynthesis.speak(utterance);
+}
+
+
+
+
+
+
+
 
   return (
     <>
@@ -132,7 +156,7 @@ async function handleTranslateClick() {
         <p>{translatedText}</p>
       </div>
 
-      <button onClick={() => setOriginalText("test du bouton original")}>
+      <button onClick={handleSpeakTranslatedText}>
         Parler
       </button>
       <button onClick={handleTranslateClick} disabled={isTranslating}>
