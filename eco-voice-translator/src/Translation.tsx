@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-const [originalText, setOriginalText] = useState("texte de base")
-const [translatedText, setTranslatedText] = useState("Texte traduit")
+
 
 
 function Translation(){
 
 
-
+const [originalText, setOriginalText] = useState("texte de base")
+const [translatedText, setTranslatedText] = useState("Texte traduit")
 
 return <> 
 
@@ -31,8 +31,8 @@ return <>
 </div>
 
 
-<button>Parler</button> 
-<button>Traduction</button>
+<button onClick={()=>setOriginalText("test du bouton original")}>Parler</button> 
+<button onClick={()=>setTranslatedText("text traduit test pour le bouton traduction ")}>Traduction</button>
 
 <div>
 <h3>Impact de cette traduction:</h3>
