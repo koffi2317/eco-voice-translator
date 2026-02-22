@@ -4,10 +4,24 @@ import createSpeechRecognition from "./SpeechRecognition";
 function Translation() {
   const [originalText, setOriginalText] = useState("texte de base");
   const [translatedText, setTranslatedText] = useState("Texte traduit");
-  const [micStatus, setMicStatus] =
-    useState<"idle" | "granted" | "denied">("idle");
+  const [micStatus, setMicStatus] = useState<"idle" | "granted" | "denied">("idle");
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translationError, setTranslationError] = useState<string | null>(null);
+ 
+
+
 
   const recognition = createSpeechRecognition("fr-FR"); // peut être null si non supporté [web:226][web:231]
+
+  function translateText(text: string): Promise<string> {
+  // pour l’instant FAKE : on simule une API
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(text + " (traduit)");
+    }, 500);
+  });
+}
+
 
   function handleStartRecording() {
     // 1) Vérifier support Web Speech API
@@ -67,6 +81,35 @@ function Translation() {
     }
   }
 
+
+async function handleTranslateClick() {
+  // 1) Vérifier qu'on a bien du texte à traduire
+  if (originalText.trim() === "") {
+    alert("Veuillez prononcer ou écrire quelque chose avant de traduire.");
+    return;
+  }
+
+  // 2) Mettre le state de chargement + reset erreur
+  setIsTranslating(true);
+  setTranslationError(null);
+
+  try {
+    // 3) Appeler la “fake API” de traduction
+    const result = await translateText(originalText);
+    setTranslatedText(result);
+  } catch (error) {
+    // 4) Gérer l’erreur
+    setTranslationError(
+      "Une erreur est survenue lors de la traduction. Veuillez réessayer."
+    );
+  } finally {
+    // 5) Toujours arrêter le “loading”
+    setIsTranslating(false);
+  }
+}
+
+
+
   return (
     <>
       <h1>Voici la page pour la traduction IA</h1>
@@ -92,13 +135,9 @@ function Translation() {
       <button onClick={() => setOriginalText("test du bouton original")}>
         Parler
       </button>
-      <button
-        onClick={() =>
-          setTranslatedText("text traduit test pour le bouton traduction ")
-        }
-      >
-        Traduction
-      </button>
+      <button onClick={handleTranslateClick} disabled={isTranslating}>
+  {    isTranslating ? "Traduction en cours..." : "Traduire"}
+   </button>
 
       <div>
         <h3>Impact de cette traduction:</h3>
