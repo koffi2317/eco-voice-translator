@@ -1,5 +1,13 @@
+import { useState } from "react";
+
+const [originalText, setOriginalText] = useState("texte de base")
+const [translatedText, setTranslatedText] = useState("Texte traduit")
+
 
 function Translation(){
+
+
+
 
 return <> 
 
@@ -10,12 +18,15 @@ return <>
 
 <div>
 <h3>Le text original</h3>
+<p>{originalText}</p> 
+
+
 
 </div>
 
 <div>  
 <h3>Le text traduit</h3>
-
+<p>{translatedText}</p>
 
 </div>
 
