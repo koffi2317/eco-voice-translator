@@ -7,7 +7,7 @@ function Translation() {
   const [micStatus, setMicStatus] = useState<"idle" | "granted" | "denied">("idle");
   const [isTranslating, setIsTranslating] = useState(false);
   const [translationError, setTranslationError] = useState<string | null>(null);
- 
+  const [history, setHistory] = useState<{ original: string; translated: string }[]>([]);
 
 
 
@@ -97,6 +97,8 @@ async function handleTranslateClick() {
     // 3) Appeler la “fake API” de traduction
     const result = await translateText(originalText);
     setTranslatedText(result);
+    setHistory((prev) => [...prev, { original: originalText, translated: result }]);
+
   } catch (error) {
     // 4) Gérer l’erreur
     setTranslationError(
@@ -127,10 +129,37 @@ function handleSpeakTranslatedText() {
     window.speechSynthesis.speak(utterance);
 }
 
+function calculateImpact(text:string): string {
+  // FAKE : on simule une analyse d'impact environnemental
+  const wordCount = text.trim().split(/\s+/).length;
+  const impact = (wordCount * 0.05).toFixed(2); // 0.05g CO2 par mot
+  const impactwater=(wordCount*0.5).toFixed(2); // 0.5ml d'eau par mot
+  return `Cette traduction a généré environ ${impact}g de CO2 et ${impactwater}ml d'eau.`;
+}
 
 
+function calculateImpactValues(text:string): { co2: number; water: number } {
+  const wordCount = text.trim().split(/\s+/).length;
+  return {      co2: parseFloat((wordCount * 0.05).toFixed(2)), // 0.05g CO2 par mot
+    water: parseFloat((wordCount * 0.5).toFixed(2)) // 0.5ml d'eau par mot
+  };
+}
 
 
+function calculetotalImpact(history: { original: string; translated: string }[]): { totalCO2: number; totalWater: number } {
+  return history.reduce(
+    (totals, item) => {     
+        const impact = calculateImpactValues(item.original);    
+        return {
+          totalCO2: totals.totalCO2 + impact.co2,
+          totalWater: totals.totalWater + impact.water
+        };
+    },
+    { totalCO2: 0, totalWater: 0 }
+  );
+}
+
+const { totalCO2, totalWater } = calculetotalImpact(history);
 
 
 
@@ -165,10 +194,30 @@ function handleSpeakTranslatedText() {
 
       <div>
         <h3>Impact de cette traduction:</h3>
+        <p>{calculateImpact(originalText)}</p>
       </div>
 
       <div>
         <h3>Historique et total de la session : </h3>
+
+<p>
+  Total estimé de la session : {totalCO2.toFixed(2)} g de CO2 et {totalWater.toFixed(2)} ml d'eau.
+</p>
+
+
+       { history.length === 0 ? (
+        <p>Aucune traduction effectuée pour le moment.</p>
+       ) : (
+        <ul>
+          {history.map((item, index) => (
+            <li key={index}>
+              <strong>Original:</strong> {item.original} | <strong>Traduit:</strong> {item.translated}
+            </li>
+          ))}
+        </ul>
+       )}
+  
+
       </div>
 
       <div>
