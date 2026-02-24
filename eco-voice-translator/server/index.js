@@ -18,45 +18,48 @@ app.post("/api/translate", async (req, res) => {
   }
 
   try {
-    const apiRes = await fetch("https://libretranslate.de/translate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        q: text,
-        source: source,
-        target: target,
-        format: "text",
-      }),
-    });
+  const apiRes = await fetch("https://libretranslate.de/translate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      q: text,
+      source: source,
+      target: target,
+      format: "text",
+    }),
+  });
 
-    if (!apiRes.ok) {
-      console.error("LibreTranslate error status:", apiRes.status);
-      return res
-        .status(500)
-        .json({ error: "Erreur lors de l'appel à LibreTranslate" });
-    }
-
-    const data = await apiRes.json();
-
-    // L'API renvoie généralement { translatedText: "..." } ou { translated_text: "..." }
-    const translated =
-      data.translatedText || data.translated_text || data.translation;
-
-    if (!translated) {
-      return res
-        .status(500)
-        .json({ error: "Réponse inattendue de LibreTranslate" });
-    }
-
-    res.json({ translatedText: translated });
-  } catch (err) {
-    console.error("Erreur LibreTranslate:", err);
-    res
+  if (!apiRes.ok) {
+    console.error("LibreTranslate error status:", apiRes.status);
+    const errorText = await apiRes.text();
+    console.error("LibreTranslate error body:", errorText);
+    return res
       .status(500)
-      .json({ error: "Erreur interne lors de la traduction" });
+      .json({ error: "Erreur lors de l'appel à LibreTranslate" });
   }
+
+  const data = await apiRes.json();
+
+  const translated =
+    data.translatedText || data.translated_text || data.translation;
+
+  if (!translated) {
+    console.error("LibreTranslate unexpected response:", data);
+    return res
+      .status(500)
+      .json({ error: "Réponse inattendue de LibreTranslate" });
+  }
+
+  res.json({ translatedText: translated });
+} catch (err) {
+  console.error("Erreur LibreTranslate:", err);
+  res
+    .status(500)
+    .json({ error: "Erreur interne lors de la traduction" });
+}
+
 });
 
 app.listen(4000, () => {
