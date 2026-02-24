@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const fetch = require("node-fetch"); // pour appeler LibreTranslate
+const fetch = require("node-fetch");
 
 const app = express();
 app.use(cors());
@@ -13,53 +13,50 @@ app.get("/api/health", (req, res) => {
 app.post("/api/translate", async (req, res) => {
   const { text, source, target } = req.body;
 
-  if (!text || !source || !target) {
-    return res.status(400).json({ error: "Missing text/source/target" });
-  }
+  // 1. Mise à jour de l'URL et de l'Hôte pour l'API 113
+  const url = 'https://google-translate113.p.rapidapi.com/api/v1/translator/text';
+  const options = {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      // Remplace bien 'TA_CLE_ICI' par ta clé : 
+      'x-rapidapi-key': 'TA_CLE_ICI', 
+      'x-rapidapi-host': 'google-translate113.p.rapidapi.com'
+    },
+    // 2. Utilisation de 'from' et 'to' au lieu de 'source' et 'target'
+    body: JSON.stringify({
+      from: source,
+      to: target,
+      text: text
+    })
+  };
 
   try {
-  const apiRes = await fetch("https://libretranslate.de/translate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      q: text,
-      source: source,
-      target: target,
-      format: "text",
-    }),
-  });
+    const apiRes = await fetch(url, options);
+    const data = await apiRes.json();
 
-  if (!apiRes.ok) {
-    console.error("LibreTranslate error status:", apiRes.status);
-    const errorText = await apiRes.text();
-    console.error("LibreTranslate error body:", errorText);
-    return res
-      .status(500)
-      .json({ error: "Erreur lors de l'appel à LibreTranslate" });
+    // Debug pour voir la réponse dans ton terminal
+    console.log("Réponse API:", data);
+
+    // 3. Extraction sécurisée du texte traduit selon le format de cette API
+    const translatedText = data.trans || data.translated_text || (data.data && data.data.translations && data.data.translations[0].translatedText);
+
+    if (translatedText) {
+      res.json({ 
+        translatedText,
+        impact: {
+          water: 15, // Valeur de ton affiche
+          co2: 0.4    // Valeur de ton affiche
+        }
+      });
+    } else {
+      throw new Error("Format de réponse Google invalide ou traduction vide");
+    }
+
+  } catch (err) {
+    console.error("Erreur API:", err.message);
+    res.status(500).json({ error: "La traduction a échoué", details: err.message });
   }
-
-  const data = await apiRes.json();
-
-  const translated =
-    data.translatedText || data.translated_text || data.translation;
-
-  if (!translated) {
-    console.error("LibreTranslate unexpected response:", data);
-    return res
-      .status(500)
-      .json({ error: "Réponse inattendue de LibreTranslate" });
-  }
-
-  res.json({ translatedText: translated });
-} catch (err) {
-  console.error("Erreur LibreTranslate:", err);
-  res
-    .status(500)
-    .json({ error: "Erreur interne lors de la traduction" });
-}
-
 });
 
 app.listen(4000, () => {
