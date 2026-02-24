@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require("express");
 const cors = require("cors");
 const fetch = require("node-fetch");
@@ -19,8 +21,9 @@ app.post("/api/translate", async (req, res) => {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
+      
       // Remplace bien 'TA_CLE_ICI' par ta clé : 
-      'x-rapidapi-key': 'TA_CLE_ICI', 
+       'x-rapidapi-key': process.env.RAPIDAPI_KEY,
       'x-rapidapi-host': 'google-translate113.p.rapidapi.com'
     },
     // 2. Utilisation de 'from' et 'to' au lieu de 'source' et 'target'
