@@ -1,0 +1,47 @@
+/* Ce style assure que la page ne reste pas coincée à gauche */
+.presentation-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* Prend presque toute la hauteur de l'écran */
+    width: 100%;
+    padding: 20px;
+}
+
+.presentation-content {
+    max-width: 800px; /* Largeur confortable pour la lecture */
+    text-align: center; /* Centre le texte comme une affiche */
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.presentation-content h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.presentation-content p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 2rem;
+}
+
+.start-btn {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    background-color: purple; /* En lien avec ton interface */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.start-btn:hover {
+    transform: scale(1.05);
+}

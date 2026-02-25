@@ -1,0 +1,75 @@
+body {
+margin: 0;
+    padding: 0;
+    display: block 
+}
+/* Titres */
+h1 {
+    color: #333;
+    font-size: 2.2em;
+    margin-bottom: 0.5em;
+}
+
+h3 {
+    margin-top: 1.5em;
+    color: #444;
+}
+
+/* Paragraphes */
+p {
+    color: #222;
+    font-size: 1.1em;
+    line-height: 1.5em;
+}
+
+/* Boutons */
+button { 
+    color: purple;
+    background-color: transparent;
+    border: 2px solid purple;
+    border-radius: 6px;
+    font-size: 1em;
+    padding: 0.6em 1.2em;
+    margin-right: 0.5em;
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: purple;
+    color: white;
+    cursor: pointer;
+}
+
+/* Sections */
+.section-box {
+    background: #f7f7f7;
+    padding: 1em;
+    border-radius: 8px;
+    margin-top: 1em;
+}
+
+/* Historique */
+ul {
+    padding-left: 1.2em;
+}
+
+li {
+    margin-bottom: 0.5em;
+}
+
+/* Erreur */
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+.translation-container {
+    max-width: 1000px; /* Un peu plus large pour le graphique */
+    width: 95%;        /* Pour garder une marge sur mobile */
+    margin: 2em auto;  /* Centre horizontalement */
+    padding: 2em;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    display: block;    /* Force l'affichage en bloc complet */
+}

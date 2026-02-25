@@ -1,5 +1,6 @@
 import { useState } from "react";
 import createSpeechRecognition from "./SpeechRecognition";
+import "./Translation.css";
 
 import {
   LineChart,
@@ -192,6 +193,7 @@ function Translation() {
   // rendu
   return (
     <>
+    <div className="translation-container">
       <h1>Voici la page pour la traduction IA</h1>
       <p>
         Cette page affiche les résultats de la traduction IA avec l'analyse de
@@ -202,12 +204,12 @@ function Translation() {
         Commencer à enregistrer votre voix
       </button>
 
-      <div>
+      <div className="section-box">
         <h3>Le texte original</h3>
         <p>{originalText}</p>
       </div>
 
-      <div>
+      <div className="section-box">
         <h3>Le texte traduit</h3>
         <p>{translatedText}</p>
       </div>
@@ -222,12 +224,12 @@ function Translation() {
         <p style={{ color: "red" }}>{translationError}</p>
       )}
 
-      <div>
+      <div className="section-box">
         <h3>Impact de cette traduction:</h3>
         <p>{calculateImpact(originalText)}</p>
       </div>
 
-      <div>
+      <div className="section-box">
         <h3>Historique et total de la session :</h3>
         <p>
           Total estimé de la session : {totalCO2.toFixed(2)} g de CO2 et{" "}
@@ -248,7 +250,7 @@ function Translation() {
         )}
       </div>
 
-      <div>
+      <div className="section-box">
         <h3>Évolution de l'eau utilisée (ml) par traduction</h3>
         {waterSeries.length === 0 ? (
           <p>Aucune donnée pour l’instant.</p>
@@ -285,13 +287,25 @@ function Translation() {
         )}
       </div>
 
-      <div>
+      <div className="section-box">
         <h3>Analyse environnementale de la journée:</h3>
+
+        <p>
+    En utilisant l'IA aujourd'hui, vous avez mobilisé : 
+    <strong> {totalWater.toFixed(2)} ml d'eau </strong> 
+    pour refroidir les serveurs et généré 
+    <strong> {totalCO2.toFixed(2)} g de CO2</strong>.
+  </p>
+  <p style={{ fontSize: "0.9em", color: "#666" }}>
+    *Ces chiffres sont basés sur les modèles de consommation des centres de données.
+  </p>
+
       </div>
 
       <button onClick={() => (window.location.href = "/")}>
         Retour à la présentation
       </button>
+      </div>
     </>
   );
 }
