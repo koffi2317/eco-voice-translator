@@ -1,17 +1,31 @@
 import { useState } from "react";
 import createSpeechRecognition from "./SpeechRecognition";
 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
 function Translation() {
   const [originalText, setOriginalText] = useState("texte de base");
   const [translatedText, setTranslatedText] = useState("Texte traduit");
-  const [micStatus, setMicStatus] = useState<"idle" | "granted" | "denied">("idle");
+  const [micStatus, setMicStatus] = useState<"idle" | "granted" | "denied">(
+    "idle"
+  );
   const [isTranslating, setIsTranslating] = useState(false);
   const [translationError, setTranslationError] = useState<string | null>(null);
-  const [history, setHistory] = useState<{ original: string; translated: string }[]>([]);
+  const [history, setHistory] = useState<
+    { original: string; translated: string }[]
+  >([]);
 
   const recognition = createSpeechRecognition("fr-FR");
 
-  // appel au backend pour la traduction du texte 
+  // appel au backend pour la traduction du texte
   async function handleTranslateClick() {
     if (originalText.trim() === "") {
       alert("Veuillez prononcer ou écrire quelque chose avant de traduire.");
@@ -54,7 +68,7 @@ function Translation() {
     }
   }
 
-  // function pour gérer l'enregistrement vocal et la reconnaissance du texte
+  // gestion de l'enregistrement vocal
   function handleStartRecording() {
     if (!recognition) {
       alert("Le Web Speech API n'est pas supporté sur ce navigateur.");
@@ -108,7 +122,7 @@ function Translation() {
     }
   }
 
-  // syntheser le texte traduit pour quon lentende à haute voix
+  // synthèse vocale du texte traduit
   function handleSpeakTranslatedText() {
     if (translatedText.trim() === "") {
       alert("Aucun texte traduit à prononcer.");
@@ -125,7 +139,7 @@ function Translation() {
     window.speechSynthesis.speak(utterance);
   }
 
-  // calcul mathematique pour l'eau et le co2
+  // calculs d'impact
   function calculateImpact(text: string): string {
     const wordCount = text.trim().split(/\s+/).length;
     const impact = (wordCount * 0.05).toFixed(2);
@@ -133,7 +147,9 @@ function Translation() {
     return `Cette traduction a généré environ ${impact}g de CO2 et ${impactwater}ml d'eau.`;
   }
 
-  function calculateImpactValues(text: string): { co2: number; water: number } {
+  function calculateImpactValues(
+    text: string
+  ): { co2: number; water: number } {
     const wordCount = text.trim().split(/\s+/).length;
     return {
       co2: parseFloat((wordCount * 0.05).toFixed(2)),
@@ -156,9 +172,24 @@ function Translation() {
     );
   }
 
-  const { totalCO2, totalWater } = calculateTotalImpact(history);
+  // série pour le graphique (eau par traduction)
+  function buildWaterSeries(
+    history: { original: string; translated: string }[]
+  ) {
+    return history.map((item, index) => {
+      const impact = calculateImpactValues(item.original);
+      return {
+        index: index + 1,
+        water: impact.water,
+        co2: impact.co2,
+      };
+    });
+  }
 
-  // pour affichage de la page traduction avec les fonctions et boutons pour les différentes actions
+  const { totalCO2, totalWater } = calculateTotalImpact(history);
+  const waterSeries = buildWaterSeries(history);
+
+  // rendu
   return (
     <>
       <h1>Voici la page pour la traduction IA</h1>
@@ -214,6 +245,43 @@ function Translation() {
               </li>
             ))}
           </ul>
+        )}
+      </div>
+
+      <div>
+        <h3>Évolution de l'eau utilisée (ml) par traduction</h3>
+        {waterSeries.length === 0 ? (
+          <p>Aucune donnée pour l’instant.</p>
+        ) : (
+          <div style={{ width: "100%", height: 300 }}>
+            <ResponsiveContainer>
+              <LineChart data={waterSeries}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="index"
+                  label={{
+                    value: "Traduction #",
+                    position: "insideBottom",
+                    offset: -5,
+                  }}
+                />
+                <YAxis
+                  label={{
+                    value: "Eau (ml)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="water"
+                  stroke="#0088FE"
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         )}
       </div>
 
