@@ -37,7 +37,7 @@ function Translation() {
     setTranslationError(null);
 
     try {
-      const res = await fetch("https://eco-voice-translator-server.onrender.com/api/translate", {
+      const res = await fetch("https://eco-voice-translator-backend.onrender.com/api/translate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
